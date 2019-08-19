@@ -64,11 +64,14 @@ Then by pressing 'Add', it will navigate to the 'add' page:
 
 By tapping'save!', the records will be shown in the records page
 
-
-The data are alreaddy stored locally using asyncstorage, next I want to add 'edit' and 'delete' function. And the edit function will be added on main page, while the delete function might be swiping the record tabs or onpress delete, still thinking. However, I will need to learn how to access each data so that I can program the colored numbers. Pretty slow progress but I think I am slowly getting the hang of it. 
+The data are alreaddy stored locally using 'asyncstorage', next I will to add 'edit' and 'delete' function. And the edit function will be added on main page, while the delete function might be swiping the record tabs or onpress delete, still thinking. However, I will need to learn how to access each data so that I can program the colored numbers. Pretty slow progress but I think I am slowly getting the hang of it. 
 
 For now my idea is:
 For adding new entry, I will record: NAME, CATEGORY, STARTING MONTH & YEAR (number) & ENDING MONTH & YEAR (number). 
 For editing entry, I think I'll just record the DURATION (number) so that it'll pay from wherever it's paid until at the previous time.
-And that's pretty much it. I have to learn how to link calendar to my database somehow... We'll see.
+And that's pretty much it. I have to learn how to link calendar to my database somehow... We'll see. 
+
+3:36pm, 19/8/2019-
+
+My aim today is to delete an entry. The idea is pretty simple: Just get the item key and insert it into the 
 
