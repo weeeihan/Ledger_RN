@@ -71,7 +71,8 @@ For adding new entry, I will record: NAME, CATEGORY, STARTING MONTH & YEAR (numb
 For editing entry, I think I'll just record the DURATION (number) so that it'll pay from wherever it's paid until at the previous time.
 And that's pretty much it. I have to learn how to link calendar to my database somehow... We'll see. 
 
-3:36pm, 19/8/2019-
+3:36pm, 19/8/2019 ~~ 20/8/2019
 
-My aim today is to delete an entry. The idea is pretty simple: Just get the item key and insert it into the 
+My progress is slowing down as my supervisor gave me some work to do in the office. I am currently an intern working in an electrical service engineering company. My progress now is that I finally get to delete an entry. After clicking an entry in the records page, the key of the entry clicked is passed into a AsyncStorage.removeItem(key) function. A modal will open up as well, for now there's only a 'delete' button in the modal. I will add an 'edit' button soon. There is a problem however, after deleting, I need to navigate to the homepage and back to record page to see the changes. Maybe I'll add a refresh function so that it will refresh itself. 
 
+For now I kind of gotten the hang of flatlist, I will start experimenting on how to show the 'month' rows and also the 'year' columns. I think this will be the hardest part of the whole project. The months will be represented by number 1 to 12. The colors of the numbers depend on the data collected, eg: duration. 
