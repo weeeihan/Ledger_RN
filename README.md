@@ -53,3 +53,6 @@ I have been able to write, store, read and delete data. Credits to https://githu
 <a href="https://ibb.co/9gbkMBY"><img src="https://i.ibb.co/tKqTdnC/1.png" alt="1" border="0"></a>
 
 <a href="https://ibb.co/QNB0crw"><img src="https://i.ibb.co/Wy9C3gJ/2.png" alt="2" border="0"></a>
+
+For now I will step into presumably the hardest part of the project -- numbers and colors! I'll have to learn it step by step though. 
+There are two lists actually. I list inside another list. The first list is the month, which is number 1 to 12. The second list is the year, which is 2019 to how many year there is. The month tabs are presented in rows along with the user 'credentials' while the year tabs are presented in columns where users can either swipe or tap to view other years. There will not be any transition for the numbers beside changes in color. For now I'll have to learn how to change color of text based on certain inputs, then I'll see what's next.
