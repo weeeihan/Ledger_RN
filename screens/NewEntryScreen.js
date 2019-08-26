@@ -56,6 +56,7 @@ render() {
             onPress={() => {
                 Keyboard.dismiss;
             }}>
+            <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>
             <View style={styles.container}>
                 <Text style={{color: 'white', fontSize: 20}}>Please key in name</Text>
                 <TextInput
@@ -77,6 +78,7 @@ render() {
                     <Text style={{fontWeight: 'bold', color: 'white', fontSize: 20}}>Save!</Text>
                 </TouchableOpacity>
             </View>
+            </KeyboardAvoidingView>
         
         </TouchableWithoutFeedback>
        
