@@ -47,6 +47,7 @@ export default class NewEntryScreen extends React.Component {
         }
     }
 
+
 static navigationOptions = { title: 'Welcome', header: null };
  
 render() {
