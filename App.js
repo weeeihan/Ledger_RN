@@ -100,17 +100,29 @@ export default class Display extends React.Component {
     var lengthOfData = keys.length - 1;
     for (var i = 0; i <= lengthOfData; i++) {
       var key = keys[i][0];
-      this.getAnItem(key);
-      var ori_list = this.state.edit_color;
-      var new_list = ori_list.push(this.state.init_color)
-      console.log(new_list)
+      this.addIndividually(key);
     }
     this.getAllColor();
+    
   }
 
-  getAnItem(key) {
-    this.getColor(key, 0, 0, 0);
-  }
+   addIndividually = async (key) => {
+    await AsyncStorage.getItem(key)
+      .then(selectedJsonString => {
+        var selected = JSON.parse(selectedJsonString);
+        //set key with this key
+        selected["key"] = key;
+        //set state'
+        this.setState(selected);
+        this.setState({ edit_color : selected.color_ });   
+        var added = this.state.edit_color.concat(this.state.init_color);
+        this.setState({ edit_color : added })
+        this.updateColor(key);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  };
 
 
   addUser = async () => {
@@ -149,6 +161,7 @@ export default class Display extends React.Component {
         this.setState(selected);
         this.setState({ edit_color: selected.color_ });
         this.changeColor(key, Fpos, Tpos, col);
+        console.log('done')
       })
       .catch(error => {
         console.log(error);
@@ -247,7 +260,7 @@ export default class Display extends React.Component {
             data={this.state.user_list}
             renderItem={({ item }) => {
               return (
-                <TouchableOpacity onPress={() => this.addNewYear()}>
+                <TouchableOpacity onPress={() => this.setState({key : item[0].toString()})}>
                   <Text style={{ color: "white" }}> {item} </Text>
                 </TouchableOpacity>
               );
