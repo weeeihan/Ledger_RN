@@ -40,12 +40,29 @@ export default class Display extends React.Component {
     super(props);
     this.state = {
       key: "",
-      data: [],
+      user_list: [],
+      year_list: [],
       Fposition: "",
       Tposition: "",
-      init_color: ["#787171", "#787171", "#787171", "#787171", "#787171", "#787171", "#787171", "#787171", "#787171", "#787171", "#787171", "#787171"],
+      init_color: [
+        "#787171",
+        "#787171",
+        "#787171",
+        "#787171",
+        "#787171",
+        "#787171",
+        "#787171",
+        "#787171",
+        "#787171",
+        "#787171",
+        "#787171",
+        "#787171"
+      ],
       edit_color: [],
-      color_:[]
+      years_: [],
+      color_: [],
+      display_list: [],
+      year_: 2019
     };
   }
 
@@ -60,7 +77,7 @@ export default class Display extends React.Component {
         return AsyncStorage.multiGet(keys)
           .then(result => {
             this.setState({
-              data: result
+              user_list: result
             });
           })
           .catch(error => {
@@ -72,8 +89,31 @@ export default class Display extends React.Component {
       });
   };
 
-  //Add
-  addColor = async () => {
+  //Accessed all saved data to get all keys
+  addNewYear() {
+    var stringed_data = JSON.stringify(this.state.user_list);
+    var parsed_data = JSON.parse(stringed_data);
+    this.addAll(parsed_data);
+  }
+
+  addAll(keys) {
+    var lengthOfData = keys.length - 1;
+    for (var i = 0; i <= lengthOfData; i++) {
+      var key = keys[i][0];
+      this.getAnItem(key);
+      var ori_list = this.state.edit_color;
+      var new_list = ori_list.push(this.state.init_color)
+      console.log(new_list)
+    }
+    this.getAllColor();
+  }
+
+  getAnItem(key) {
+    this.getColor(key, 0, 0, 0);
+  }
+
+
+  addUser = async () => {
     var c_all = {
       color_: this.state.init_color
     };
@@ -99,61 +139,66 @@ export default class Display extends React.Component {
     ]);
   };
 
-
   getColor = async (key, Fpos, Tpos, col) => {
     await AsyncStorage.getItem(key)
-      .then(
-        selectedJsonString => {
-          var selected = JSON.parse(selectedJsonString);
-          //set key with this key
-          selected['key'] = key;
-          //set staate'
-          this.setState(selected)
-          this.setState({ edit_color : selected.color_ })
-          this.changeColor(key, Fpos, Tpos, col)
-
-        }
-      )
+      .then(selectedJsonString => {
+        var selected = JSON.parse(selectedJsonString);
+        //set key with this key
+        selected["key"] = key;
+        //set state'
+        this.setState(selected);
+        this.setState({ edit_color: selected.color_ });
+        this.changeColor(key, Fpos, Tpos, col);
+      })
       .catch(error => {
         console.log(error);
-      })
-  }
+      });
+  };
 
   changeColor(key, Fpos, Tpos, col) {
-    var newColor = this.Looper(Fpos, Tpos, col)
-    this.setState({ edit_color : newColor })
-    this.updateColor(key)
-
+    var newColor = this.Looper(Fpos, Tpos, col);
+    this.setState({ edit_color: newColor });
+    this.updateColor(key);
   }
 
   Looper(Fpos, Tpos, col) {
-    let F = parseInt(Fpos)
-    let T = parseInt(Tpos)
-    let newColor = this.state.edit_color
-    for (i = F; i <= T; i++ ){
-      newColor[i-1] = col
+    let F = parseInt(Fpos);
+    let T = parseInt(Tpos);
+    let newColor = this.state.edit_color;
+    for (i = F; i <= T; i++) {
+      newColor[i - 1] = col;
     }
     return newColor;
-    
   }
 
+  updateColor = async key => {
+    var edited = {
+      color_: this.state.edit_color
+    };
+    await AsyncStorage.mergeItem(key, JSON.stringify(edited))
+      .then(() => {
+        this.getAllColor();
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  };
 
-
-  updateColor = async (key) => {
-
-      var edited = {
-        color_ : this.state.edit_color
-      }
-      await AsyncStorage.mergeItem(key, JSON.stringify(edited))
-        .then(() => {
-          this.getAllColor();
-        })
-        .catch(error => {
-          console.log(error);
-        })
-    
+  changeYear(chg) {
+    let chgYear = this.state.year_;
+    if (chg == "add") {
+      chgYear += 1;
+    }
+    if (chg == "sub") {
+      chgYear -= 1;
+    }
+    this.setState({ year_: chgYear });
   }
 
+  clearData = async () => {
+    AsyncStorage.clear();
+    this.getAllColor();
+  };
 
   render() {
     return (
@@ -161,7 +206,7 @@ export default class Display extends React.Component {
         <View style={{ marginTop: 20 }}>
           <Button
             onPress={() => {
-              this.addColor();
+              this.addUser();
             }}
             color="#353535"
             title="Add"
@@ -173,7 +218,7 @@ export default class Display extends React.Component {
             color="#353535"
             title="Delete"
           />
-          <View style = {{ flexDirection : "row"}}>
+          <View style={{ flexDirection: "row" }}>
             <TextInput
               style={{ color: "white" }}
               placeholder="...from..."
@@ -185,104 +230,54 @@ export default class Display extends React.Component {
               onChangeText={T_position => this.setState({ T_position })}
             />
           </View>
-            <Button
-              onPress={() => {
-                this.getColor(this.state.key, this.state.F_position, this.state.T_position,"#0ACF83");
-              }}
-              color="#353535"
-              title="Paid"
-            />
-          <FlatList
-            data={this.state.data}
-            renderItem={({ item }) => {
-              c_all = JSON.parse(item[1]);
-              return (
+          <Button
+            onPress={() => {
+              this.getColor(
+                this.state.key,
+                this.state.F_position,
+                this.state.T_position,
+                "#0ACF83"
+              );
+            }}
+            color="#353535"
+            title="Paid"
+          />
 
-                <TouchableOpacity
-                  style={styles.numbers}
-                  onPress={() => this.setState({ key: item[0].toString() })}>
-                {/* <Text>Fucking delete me</Text> */}
-                  <Text style={{ color: c_all.color_[0]  }} onPress={() => this.setState({ key: item[0].toString() })}> 1 </Text>
-                  <TouchableOpacity style={styles.numbers}>
-                    <Text style={{ color: c_all.color_[1] }} onPress={() => this.setState({ key: item[0].toString() })}> 2 </Text>
-                    <TouchableOpacity style={styles.numbers}>
-                      <Text style={{ color: c_all.color_[2] }} onPress={() => this.setState({ key: item[0].toString() })}> 3 </Text>
-                      <TouchableOpacity style={styles.numbers}>
-                        <Text style={{ color: c_all.color_[3] }} onPress={() => this.setState({ key: item[0].toString() })}> 4 </Text>
-                        <TouchableOpacity style={styles.numbers}>
-                          <Text style={{ color: c_all.color_[4] }} onPress={() => this.setState({ key: item[0].toString() })}> 5 </Text>
-                            <TouchableOpacity style={styles.numbers}>
-                              <Text style={{ color: c_all.color_[5] }} onPress={() => this.setState({ key: item[0].toString() })}> 6 </Text>
-                              <TouchableOpacity style={styles.numbers} >
-                              <Text style={{ color: c_all.color_[6] }} onPress={() => this.setState({ key: item[0].toString() })}> 7 </Text>
-                              <TouchableOpacity style={styles.numbers} >
-                              <Text style={{ color: c_all.color_[7] }} onPress={() => this.setState({ key: item[0].toString() })}> 8 </Text>
-                              <TouchableOpacity style={styles.numbers}>
-                              <Text style={{ color: c_all.color_[8] }} onPress={() => this.setState({ key: item[0].toString() })}> 9 </Text>
-                              <TouchableOpacity style={styles.numbers}>
-                              <Text style={{ color: c_all.color_[9] }} onPress={() => this.setState({ key: item[0].toString() })}> 10 </Text>
-                              <TouchableOpacity style={styles.numbers}>
-                              <Text style={{ color: c_all.color_[10] }} onPress={() => this.setState({ key: item[0].toString() })}> 11 </Text>
-                              <TouchableOpacity style={styles.numbers}>
-                              <Text style={{ color: c_all.color_[11] }} onPress={() => this.setState({ key: item[0].toString() })}> 12 </Text>
-                          </TouchableOpacity>
-                          </TouchableOpacity>
-                          </TouchableOpacity>
-                          </TouchableOpacity>
-                          </TouchableOpacity>
-                          </TouchableOpacity>
-                          </TouchableOpacity>
-                        </TouchableOpacity>
-                      </TouchableOpacity>
-                    </TouchableOpacity>
-                  </TouchableOpacity>
+          <FlatList
+            data={this.state.user_list}
+            renderItem={({ item }) => {
+              return (
+                <TouchableOpacity onPress={() => this.addNewYear()}>
+                  <Text style={{ color: "white" }}> {item} </Text>
                 </TouchableOpacity>
               );
             }}
             keyExtractor={(item, index) => item[0].toString()}
           />
+          <View style={{ flexDirection: "row" }}>
+            <TouchableOpacity onPress={() => this.changeYear("sub")}>
+              <Text style={{ color: "white" }}> prev </Text>
+            </TouchableOpacity>
+            <Text style={{ color: "white" }}> {this.state.year_} </Text>
+            <TouchableOpacity onPress={() => this.changeYear("add")}>
+              <Text style={{ color: "white" }}> next </Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => this.clearData()}>
+              <Text style={{ color: "white" }}> clear </Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => this.addNewYear()}>
+              <Text style={{ color: "white" }}> Add new year </Text>
+            </TouchableOpacity>
+          </View>
+
           <Text style={{ color: "white" }}>{this.state.key} </Text>
-          <Text style={{ color: "white" }}>{this.state.F_position} , {this.state.T_position} </Text>
+          <Text style={{ color: "white" }}>
+            {this.state.F_position} , {this.state.T_position}{" "}
+          </Text>
         </View>
       </View>
     );
   }
-}
-
-class editStuff extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      color_: ["", "", "", "", ""]
-    };
-    var key;
-  }
-
-  passKey(gotkey, position) {
-    key = gotkey;
-    this.getUpdate(position, gotkey, "#0ACF83");
-    this.updatecolor(gotkey);
-  }
-
-  getColor = async key => {
-    await AsyncStorage.getItem(key)
-      .then(c_allstring => {
-        var c_all = JSON.parse(c_allstring);
-        c_all["key"] = key;
-        this.setState(c_all);
-      })
-      .catch(error => {
-        console.log(error);
-      });
-  };
-
-
-  updatecolor = async key => {
-    var c_all = {
-      color_: this.state.color_
-    };
-    await AsyncStorage.mergeItem(key, JSON.stringify(c_all));
-  };
 }
 
 const styles = StyleSheet.create({
